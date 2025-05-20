@@ -1,0 +1,28 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: svc
+  namespace: ksvc
+spec:
+  template:
+    spec:
+      containers:
+        - image: svc:v0.1.0
+          ports:
+            - name: h2c
+              containerPort: 8080
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: failer
+  namespace: ksvc
+spec:
+  template:
+    spec:
+      containers:
+        - image: gcr.io/knative-nightly/knative.dev/eventing-rabbitmq/cmd/failer@sha256:21b69f637e077c97f9a9a57072cf397d2d465af9c30f9a9bfb47965b15df3b0f
+          env:
+            - name: DEFAULT_RESPONSE_CODE
+              value: "200"

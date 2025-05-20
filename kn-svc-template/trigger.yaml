@@ -1,0 +1,17 @@
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: tgr
+  namespace: ksvc
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: dev.ksvc.svc
+      source: dev.ksvc/src
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: svc
