@@ -1,0 +1,5 @@
+---
+namespace: knative
+resources:
+  - netgateway.yaml
+  - server.yaml

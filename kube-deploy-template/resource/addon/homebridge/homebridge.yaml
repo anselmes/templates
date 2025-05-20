@@ -1,0 +1,11 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: homebridge
+spec:
+  chartName: oci://registry-1.docker.io/sanselmechart/homebridge
+  namespace: ucp
+  releaseName: homebridge
+  timeout: 0s
+  version: 5.3.2

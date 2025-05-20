@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - ../crd
+  - ../resource/addon/externaldns
+  - ../resource/addon/lgtm
+  - ../resource/core
+  - defaultgw.yaml
+  - tlsgw.yaml
+patches:
+  - patch: |
+      - op: add
+        path: /metadata/labels
+        value:
+          gateway.kubernetes.io/name: default
+          pod-security.kubernetes.io/audit: baseline
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/warn: baseline
+    target:
+      kind: Namespace

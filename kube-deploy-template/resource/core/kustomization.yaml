@@ -1,0 +1,7 @@
+---
+resources:
+  - certmanager.yaml
+  - gatekeeper.yaml
+  - monitoring.yaml
+  - trustmanager.yaml
+  - namespace.yaml

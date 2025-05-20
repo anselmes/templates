@@ -1,0 +1,12 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: k0s-addon-chart-knative-operator
+  namespace: kube-system
+spec:
+  chartName: oci://registry-1.docker.io/sanselmechart/knative-operator
+  namespace: operators
+  releaseName: knative-operator
+  timeout: 0s
+  version: 0.3.0

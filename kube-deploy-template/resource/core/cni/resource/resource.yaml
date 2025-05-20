@@ -1,0 +1,24 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: k0s-addon-chart-cni-resource
+spec:
+  chartName: oci://registry-1.docker.io/sanselmechart/cni-resource
+  releaseName: cni-resource
+  timeout: 0s
+  version: 0.1.0
+  values: |
+    cilium:
+      pool:
+        allowFirstLastIPs: "'No'"
+      advert:
+        l2:
+          enabled: true
+        bgp:
+          enabled: false
+      config:
+        cluster:
+          enabled: false
+        peer:
+          enabled: false

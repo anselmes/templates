@@ -1,0 +1,18 @@
+---
+apiVersion: sources.knative.dev/v1alpha1
+kind: RabbitmqSource
+metadata:
+  name: rabbitmq-source
+  namespace: cloud
+spec:
+  # vhost: you-rabbitmq-vhost
+  rabbitmqClusterReference:
+    name: rabbitmq
+  rabbitmqResourcesConfig:
+    exchangeName: eventing-rabbitmq-source
+    queueName: eventing-rabbitmq-source
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default

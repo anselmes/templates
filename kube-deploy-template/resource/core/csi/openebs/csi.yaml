@@ -1,0 +1,16 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: k0s-addon-chart-openebs
+spec:
+  chartName: oci://registry-1.docker.io/sanselmechart/openebs
+  releaseName: openebs
+  timeout: 0s
+  version: 3.10.0
+  values: |
+    analytics:
+      enabled: false
+    localprovisioner:
+      hostpathClass:
+        isDefaultClass: true

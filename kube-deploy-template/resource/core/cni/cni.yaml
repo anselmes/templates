@@ -1,0 +1,16 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: k0s-addon-chart-cilium
+spec:
+  chartName: oci://registry-1.docker.io/sanselmechart/cilium
+  releaseName: cilium
+  timeout: 0s
+  version: 1.16.4
+  values: |
+    kubeProxyReplacement: true
+    gatewayAPI:
+      enabled: true
+      gatewayClass:
+        create: true

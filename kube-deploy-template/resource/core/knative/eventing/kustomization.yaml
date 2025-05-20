@@ -1,0 +1,5 @@
+---
+namespace: knative
+resources:
+  - backstage.yaml
+  - event.yaml
