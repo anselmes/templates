@@ -1,4 +1,29 @@
-# Templates
+# Readme
+
+```shell
+# Copy the example environment file to .env
+cp -f example.env .env
+```
+
+```shell
+# Source the environment variables from .env and Zephyr environment script
+source .env
+source "${ZEPHYR_BASE}/zephyr-env.sh"
+```
+
+## Build
+
+```shell
+# Build the Zephyr project for the specified board and device tree overlay
+west build -p -b"${ZEPHYR_BOARD}" -- -DDTC_OVERLAY_FILE="${ZEPHYR_BOARD_OVERLAY}"
+```
+
+## Flash
+
+```shell
+# Flash the compiled firmware to the board
+west flash
+```
 
 ---
 
