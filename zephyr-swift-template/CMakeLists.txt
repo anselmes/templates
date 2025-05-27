@@ -1,70 +1,97 @@
+# ==============================================================================
+# HELLO PROJECT CMAKE CONFIGURATION
+# ==============================================================================
+# This CMake build file configures a Zephyr RTOS embedded project with Swift
+# language support. It handles the integration between Swift compiler settings
+# and Zephyr's build system for embedded development.
+# ==============================================================================
+
 cmake_minimum_required(VERSION 3.29)
 
+# ==== Environment Configuration ====
 # Retrieve build configuration from environment variables
-set(BOARD $ENV{ZEPHYR_BOARD})
-set(BUILD_TARGET $ENV{ZEPHYR_BUILD_TARGET})
-set(BUILD_TOOLCHAIN $ENV{ZEPHYR_BUILD_TOOLCHAIN})
-set(CROSS_COMPILE $ENV{CROSS_COMPILE})
-set(DTC_OVERLAY_FILE $ENV{ZEPHYR_BOARD_OVERLAY})
-set(ZEPHYR_TOOLCHAIN_VARIANT $ENV{ZEPHYR_TOOLCHAIN_VARIANT})
+set(BOARD $ENV{ZEPHYR_BOARD})              # Target board for the application
+set(BUILD_TARGET $ENV{ZEPHYR_BUILD_TARGET})        # Target triple (e.g., arm-none-eabi)
+set(CROSS_COMPILE $ENV{CROSS_COMPILE})             # Cross-compiler prefix
+set(DTC_OVERLAY_FILE $ENV{ZEPHYR_BOARD_OVERLAY})   # Device Tree overlay file
+set(ZEPHYR_TOOLCHAIN_VARIANT $ENV{ZEPHYR_TOOLCHAIN_VARIANT})  # Toolchain variant name
 
+# ==== Zephyr Integration ====
+# Find and include Zephyr RTOS package
+# This initializes Zephyr's build system and makes its build targets available
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+
+# ==== Swift Configuration ====
 # Configure Swift compiler settings
 set(CMAKE_Swift_COMPILER_TARGET ${BUILD_TARGET})        # Set target triple for Swift compiler
 set(CMAKE_Swift_COMPILATION_MODE wholemodule)           # Enable whole-module optimization (WMO) required by Embedded Swift
 set(CMAKE_Swift_COMPILER_WORKS true)                    # Explicitly indicate Swift compiler is functional
 
-# Find and include Zephyr RTOS package
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-
 # Define the project with Swift language support
-project(zephy_swift_template)
+project(zephyr_swift_template)
 enable_language(Swift)
 
-# Add C source file containing necessary stubs for Swift interoperability
+# ==== Compiler Flags ====
+# Set global Swift compiler flags
+# These flags enable embedded development features and configure optimizations
+add_compile_options(
+  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Embedded>"          # Enable Swift for embedded systems feature
+  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -function-sections>"                  # Place each function in its own section for better link-time optimization
+  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -enable-single-module-llvm-emission>" # Generate single LLVM module
+)
+
+# ==== Zephyr Definitions Propagation ====
+# Add definitions from Zephyr to -Xcc flags
+# This ensures Swift code has access to all Zephyr-defined macros
+# get_target_property(ZEPHYR_DEFINES zephyr_interface INTERFACE_COMPILE_DEFINITIONS)
+# if(ZEPHYR_DEFINES)
+#   foreach(flag ${ZEPHYR_DEFINES})
+#     # Ignore expressions like "$<SOMETHING>" which are CMake generator expressions
+#     string(FIND "${flag}" "$<" start_of_expression)
+#     if(NOT start_of_expression EQUAL -1)
+#       continue()
+#     endif()
+#     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -D${flag}>")
+#   endforeach()
+# endif()
+
+# ==== C Support Files ====
+# Add C stubs required for Swift/C interoperability
 target_sources(app PRIVATE src/Stubs.c)
 
+# ==== Swift Library Configuration ====
 # Create an OBJECT library for Swift main source file
 # OBJECT library ensures the Swift main function is linked correctly
 # Zephyr provides a default weak main definition, which would drop a STATIC library from linking
 add_library(${PROJECT_NAME} OBJECT
-  lib/Time.swift
-  src/Main.swift
+  src/Main.swift       # Main application entry point
+  lib/Time.swift       # Time-related utilities
 )
 
+# ==== Build Dependencies ====
 # Ensure syscall headers are generated before compiling Swift sources
 # This is crucial as Swift code might depend on these generated headers.
 add_dependencies(${PROJECT_NAME} syscall_list_h_target)
 
+# ==== Swift-Specific Compiler Options ====
+# Add specific compile options for Swift language
+target_compile_options(${PROJECT_NAME} PRIVATE
+  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-parse-as-library>"  # Process Swift files as libraries rather than executables
+  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Osize>"             # Optimize for binary size (important for embedded)
+  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-import-bridging-header ${CMAKE_CURRENT_LIST_DIR}/include/BridgingHeader.h>" # Bridge to C APIs
+)
+
+# ==== Include Directories ====
 # Copy include directories from the C target (app) to the Swift target
 # This makes Zephyr's and application's C headers available to Swift.
 target_include_directories(${PROJECT_NAME} PRIVATE "$<TARGET_PROPERTY:app,INCLUDE_DIRECTORIES>")
 
+# ==== Linking ====
 # Link the Swift OBJECT library into the primary Zephyr application target
 # This integrates the compiled Swift code into the final application.
 target_link_libraries(app PRIVATE ${PROJECT_NAME})
 
-# Add specific compile options for Swift language
-target_compile_options(${PROJECT_NAME} PRIVATE
-  # Enable experimental Embedded Swift features, necessary for targeting embedded platforms.
-  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Embedded>"
-
-  # Parse Swift sources as a library, preventing the Swift compiler from expecting a main entry point (Zephyr provides it).
-  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-parse-as-library>"
-
-  # Optimize Swift code for size, crucial for resource-constrained embedded systems.
-  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Osize>"
-
-  # Emit LLVM IR as a single module. This can improve optimization opportunities.
-  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -enable-single-module-llvm-emission>"
-
-  # Place each function in its own section in the object file.
-  # This allows the linker to perform dead code stripping more effectively.
-  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -function-sections>"
-
-  # Import the C bridging header, allowing Swift to call C functions and use C types.
-  "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-import-bridging-header ${CMAKE_CURRENT_LIST_DIR}/include/BridgingHeader.h>"
-)
-
+# ==== Post-Build Processing ====
 # Post-build step: Remove the .swift_modhash section from the final binary
 # The .swift_modhash section is used for incremental compilation but is not needed in the final embedded binary.
 # Removing it reduces binary size and removes unnecessary metadata.
