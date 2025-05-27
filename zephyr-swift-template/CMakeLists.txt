@@ -17,7 +17,7 @@ set(CMAKE_Swift_COMPILER_WORKS true)                    # Explicitly indicate Sw
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 # Define the project with Swift language support
-project(zephy-swift-template)
+project(zephy_swift_template)
 enable_language(Swift)
 
 # Add C source file containing necessary stubs for Swift interoperability
@@ -53,7 +53,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
   # Optimize Swift code for size, crucial for resource-constrained embedded systems.
   "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Osize>"
-
 
   # Emit LLVM IR as a single module. This can improve optimization opportunities.
   "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -enable-single-module-llvm-emission>"

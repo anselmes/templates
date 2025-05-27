@@ -177,8 +177,9 @@ ext/libtool
 
 # Project Files
 
-.vscode/
 .idea/
+.vscode/
+build/
 
 *.env
 !example.env
