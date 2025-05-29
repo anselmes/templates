@@ -1,13 +1,12 @@
 ---
-namespace: kube-system
+kind: Kustomization
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    cni: cilium
 resources:
-  - resource.yaml
-configurations:
-  - config.yaml
+  - ../../../resource/core/cni
+  - ../../../resource/core/cni/resource
+patches:
+  - path: cni.yaml

@@ -1,0 +1,15 @@
+---
+kind: Component
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
+labels:
+  - pairs:
+      owner: kubernetes
+      component: cloudvisor
+resources:
+  - ../../resource/osh
+  - ../../resource/osh/cinder
+  - ../../resource/osh/octavia

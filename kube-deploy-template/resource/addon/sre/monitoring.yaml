@@ -1,0 +1,135 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: monitoring
+spec:
+  interval: 10m
+  releaseName: monitoring
+  timeout: 5m
+  chart:
+    spec:
+      chart: labsonline/charts/k8s-monitoring
+      version: 2.0.0
+      sourceRef:
+        kind: HelmRepository
+        name: github
+      interval: 5m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  postRenderers:
+    - kustomize:
+        images:
+          - # docker.io/grafana/alloy:v1.7.4
+            name: docker.io/grafana/alloy
+            digest: sha256:fd2d274beeed926ffe62cf353df12a69d37af61e9a27eb4dc897a127755e4d95
+          - # docker.io/jimmidyson/configmap-reload:v0.9.0
+            name: docker.io/jimmidyson/configmap-reload
+            digest: sha256:f34fe394b1dab3982025c4107df5526ca773bc245adac7dbef877ccb5f5d5df5
+          - # ghcr.io/grafana/k8s-monitoring-test:1.6.29
+            name: ghcr.io/grafana/k8s-monitoring-test
+            digest: sha256:1d63bd97d16f2521180fd93c56f54a327d82e10776685b8794860871d10f55d7
+          - # quay.io/brancz/kube-rbac-proxy:v0.19.0
+            name: quay.io/brancz/kube-rbac-proxy
+            digest: sha256:c2ef3c3fcb4ffcfab30088b19c8ef18931aac8cf072c75ef72c654457e1d632b
+          - # quay.io/prometheus/node-exporter:v1.9.0
+            name: quay.io/prometheus/node-exporter
+            digest: sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848
+          - # registry.k8s.io/kube-state-metrics/kube-state-metrics:
+            name: registry.k8s.io/kube-state-metrics/kube-state-metrics
+  values:
+    cluster:
+      name: kubernetes
+    externalServices:
+      prometheus:
+        secret:
+          create: false
+      loki:
+        secret:
+          create: false
+      tempo:
+        secret:
+          create: false
+      pyroscope:
+        secret:
+          create: false
+    metrics:
+      enabled: true
+      alloy:
+        enabled: true
+      kube-state-metrics:
+        enabled: true
+      node-exporter:
+        enabled: true
+      kubelet:
+        enabled: true
+      kubeletResource:
+        enabled: true
+      cadvisor:
+        enabled: true
+      apiserver:
+        enabled: true
+      kubeControllerManager:
+        enabled: true
+      kubeProxy:
+        enabled: true
+      kubeScheduler:
+        enabled: true
+      cost:
+        enabled: false
+      kepler:
+        enabled: false
+      beyla:
+        enabled: false
+      podMonitors:
+        enabled: true
+      probes:
+        enabled: true
+      serviceMonitors:
+        enabled: true
+      kubernetesMonitoring:
+        enabled: true
+    logs:
+      enabled: false
+      pod_logs:
+        enabled: false
+      podLogsObjects:
+        enabled: false
+      cluster_events:
+        enabled: false
+      journal:
+        enabled: false
+    traces:
+      enabled: false
+    profiles:
+      enabled: false
+      ebpf:
+        enabled: true
+      java:
+        enabled: true
+      pprof:
+        enabled: true
+    configAnalysis:
+      enabled: true
+    kube-state-metrics:
+      enabled: true
+    prometheus-node-exporter:
+      enabled: true
+    prometheus-operator-crds:
+      enabled: true
+    opencost:
+      enabled: false
+    kepler:
+      enabled: false
+    beyla:
+      enabled: false
+    alloy:
+      enabled: true

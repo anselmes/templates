@@ -1,13 +1,12 @@
 ---
-namespace: kube-system
+namespace: cert-manager
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    cni: cilium
 resources:
-  - resource.yaml
-configurations:
-  - config.yaml
+  - certmanager.yaml
+  - clusterissuer.yaml
+  # - trustmanager.yaml
+  # - webhook.yaml

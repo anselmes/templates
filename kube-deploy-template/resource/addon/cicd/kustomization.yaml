@@ -1,9 +1,14 @@
 ---
+namespace: cicd
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
   labels:
-    csi: ceph
-resources: []
+    addon: cicd
+resources:
+  - flux.yaml
+  - namespace.yaml
+  - runner.yaml
+  - source.yaml

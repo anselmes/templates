@@ -5,9 +5,8 @@ buildMetadata:
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    cni: cilium
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer-self-signed
 resources:
-  - resource.yaml
-configurations:
-  - config.yaml
+  - gateway.yaml
+  - tlsgw.yaml

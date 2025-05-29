@@ -1,0 +1,40 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cm-wh-pdns
+spec:
+  interval: 10m
+  releaseName: cm-wh-pdns
+  timeout: 5m
+  chart:
+    spec:
+      chart: labsonline/charts/cert-manager-webhook-pdns
+      version: 3.2.1
+      sourceRef:
+        kind: HelmRepository
+        name: github
+      interval: 5m
+  dependsOn:
+    - name: cm
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  postRenderers:
+    - kustomize:
+        images:
+          - # docker.io/zachomedia/cert-manager-webhook-pdns:v2.5.2
+            name: docker.io/zachomedia/cert-manager-webhook-pdns
+            digest: sha256:c2f02c34f8214a803e181c96f82dbb0fe9b9b433f19b11b3b402ad4978a7eedf
+  values:
+    groupName: acme.kubernetes.internal
+    certManager:
+      namespace: cert-manager
+      serviceAccountName: cm-cert-manager

@@ -1,9 +1,13 @@
 ---
+namespace: ucp
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    csi: ceph
-resources: []
+labels:
+  - pairs:
+      owner: kubernetes
+      addon: ucp
+resources:
+  - release.yaml

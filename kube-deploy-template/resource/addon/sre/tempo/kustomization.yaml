@@ -1,9 +1,13 @@
 ---
+namespace: sre
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    csi: ceph
-resources: []
+labels:
+  - pairs:
+      owner: kubernetes
+      addon: sre
+resources:
+  - release.yaml

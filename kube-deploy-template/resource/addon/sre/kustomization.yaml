@@ -1,13 +1,14 @@
 ---
-namespace: kube-system
+namespace: sre
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-  labels:
-    cni: cilium
+labels:
+  - pairs:
+      owner: kubernetes
+      addon: sre
 resources:
-  - resource.yaml
-configurations:
-  - config.yaml
+  - monitoring.yaml
+  - namespace.yaml

@@ -1,0 +1,18 @@
+---
+namespace: ucp
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
+labels:
+  - pairs:
+      owner: kubernetes
+      addon: ucp
+resources:
+  - namespace.yaml
+  # - ../../data/mariadb
+  # - ../../data/postgresql
+patches: []
+# - path: mariadb.yaml
+# - path: postgresql.yaml

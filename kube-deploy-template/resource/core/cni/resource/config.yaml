@@ -1,0 +1,6 @@
+---
+nameReference:
+  - kind: HelmRelease
+    fieldSpecs:
+      - kind: HelmRelease
+        path: spec/dependsOn

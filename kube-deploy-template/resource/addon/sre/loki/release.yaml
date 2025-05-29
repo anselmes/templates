@@ -1,0 +1,182 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+spec:
+  interval: 10m
+  releaseName: loki
+  timeout: 5m
+  chart:
+    spec:
+      chart: loki-distributed
+      version: 0.80.1
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+      interval: 5m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  postRenderers:
+    - kustomize:
+        images:
+          - # docker.io/grafana/loki:3.4.2
+            name: docker.io/grafana/loki
+            digest: sha256:58a6c186ce78ba04d58bfe2a927eff296ba733a430df09645d56cdc158f3ba08
+          - # docker.io/memcached:1.6.37
+            name: docker.io/memcached
+            digest: sha256:f23cef7900b19773bcee717842541b10527456fe464bc2b8a84e49bc01fff9b4
+          - # docker.io/nginxinc/nginx-unprivileged:1.27.4-alpine
+            name: docker.io/nginxinc/nginx-unprivileged
+            digest: sha256:73ee3356fe50559ece217d0fefcff35cdece6a67a49c1583433ea7cb6b7445aa
+          - # docker.io/prom/memcached-exporter:v0.15.1
+            name: docker.io/prom/memcached-exporter
+            digest: sha256:bc441feeb97304c7af70c76ee465080c9e071665560bfbd31cd24318c202ed18
+  values:
+    loki:
+      schemaConfig:
+        configs:
+          - from: "2020-05-15"
+            store: tsdb
+            object_store: filesystem
+            schema: v13
+            index:
+              prefix: index_
+              period: 24h
+      storageConfig:
+        boltdb_shipper: null
+        tsdb_shipper:
+          active_index_directory: /var/loki/index
+          cache_location: /var/loki/cache
+          cache_ttl: 168h
+        filesystem:
+          directory: /var/loki/chunks
+    serviceMonitor:
+      enabled: true
+    prometheusRule:
+      enabled: true
+      groups:
+        - name: loki_rules
+          rules:
+            - expr:
+                histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket[1m]))
+                by (le, cluster, job))
+              record: cluster_job:loki_request_duration_seconds:99quantile
+            - expr:
+                histogram_quantile(0.50, sum(rate(loki_request_duration_seconds_bucket[1m]))
+                by (le, cluster, job))
+              record: cluster_job:loki_request_duration_seconds:50quantile
+            - expr:
+                sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster, job) / sum(rate(loki_request_duration_seconds_count[1m]))
+                by (cluster, job)
+              record: cluster_job:loki_request_duration_seconds:avg
+            - expr: sum(rate(loki_request_duration_seconds_bucket[1m])) by (le, cluster, job)
+              record: cluster_job:loki_request_duration_seconds_bucket:sum_rate
+            - expr: sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster, job)
+              record: cluster_job:loki_request_duration_seconds_sum:sum_rate
+            - expr: sum(rate(loki_request_duration_seconds_count[1m])) by (cluster, job)
+              record: cluster_job:loki_request_duration_seconds_count:sum_rate
+            - expr:
+                histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket[1m]))
+                by (le, cluster, job, route))
+              record: cluster_job_route:loki_request_duration_seconds:99quantile
+            - expr:
+                histogram_quantile(0.50, sum(rate(loki_request_duration_seconds_bucket[1m]))
+                by (le, cluster, job, route))
+              record: cluster_job_route:loki_request_duration_seconds:50quantile
+            - expr:
+                sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster, job, route)
+                / sum(rate(loki_request_duration_seconds_count[1m])) by (cluster, job, route)
+              record: cluster_job_route:loki_request_duration_seconds:avg
+            - expr:
+                sum(rate(loki_request_duration_seconds_bucket[1m])) by (le, cluster, job,
+                route)
+              record: cluster_job_route:loki_request_duration_seconds_bucket:sum_rate
+            - expr: sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster, job, route)
+              record: cluster_job_route:loki_request_duration_seconds_sum:sum_rate
+            - expr: sum(rate(loki_request_duration_seconds_count[1m])) by (cluster, job, route)
+              record: cluster_job_route:loki_request_duration_seconds_count:sum_rate
+            - expr:
+                histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket[1m]))
+                by (le, cluster, namespace, job, route))
+              record: cluster_namespace_job_route:loki_request_duration_seconds:99quantile
+            - expr:
+                histogram_quantile(0.50, sum(rate(loki_request_duration_seconds_bucket[1m]))
+                by (le, cluster, namespace, job, route))
+              record: cluster_namespace_job_route:loki_request_duration_seconds:50quantile
+            - expr:
+                sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster, namespace,
+                job, route) / sum(rate(loki_request_duration_seconds_count[1m])) by (cluster,
+                namespace, job, route)
+              record: cluster_namespace_job_route:loki_request_duration_seconds:avg
+            - expr:
+                sum(rate(loki_request_duration_seconds_bucket[1m])) by (le, cluster, namespace,
+                job, route)
+              record: cluster_namespace_job_route:loki_request_duration_seconds_bucket:sum_rate
+            - expr:
+                sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster, namespace,
+                job, route)
+              record: cluster_namespace_job_route:loki_request_duration_seconds_sum:sum_rate
+            - expr:
+                sum(rate(loki_request_duration_seconds_count[1m])) by (cluster, namespace,
+                job, route)
+              record: cluster_namespace_job_route:loki_request_duration_seconds_count:sum_rate
+    ingester:
+      persistence:
+        enabled: false
+      extraArgs:
+        - -config.expand-env=true
+    querier:
+      persistence:
+        enabled: false
+      extraArgs:
+        - -config.expand-env=true
+    queryScheduler:
+      enabled: false
+      replicas: 2
+    tableManager:
+      enabled: false
+    gateway:
+      basicAuth:
+        enabled: false
+        username: null
+        password: null
+        existingSecret: null
+    compactor:
+      enabled: false
+      persistence:
+        enabled: false
+    ruler:
+      enabled: false
+    indexGateway:
+      enabled: false
+      persistence:
+        enabled: false
+    memcachedExporter:
+      enabled: false
+    memcachedChunks:
+      enabled: false
+      persistence:
+        enabled: false
+    memcachedFrontend:
+      enabled: false
+      persistence:
+        enabled: false
+    memcachedIndexQueries:
+      enabled: false
+      persistence:
+        enabled: false
+    memcachedIndexWrites:
+      enabled: false
+      persistence:
+        enabled: false
+    networkPolicy:
+      enabled: false

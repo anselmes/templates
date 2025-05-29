@@ -1,4 +1,11 @@
 ---
 namespace: kube-system
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    cni: cilium
 resources:
   - cni.yaml

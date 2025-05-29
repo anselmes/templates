@@ -1,0 +1,66 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus
+spec:
+  interval: 10m
+  releaseName: prometheus
+  timeout: 5m
+  chart:
+    spec:
+      chart: bitnamicharts/kube-prometheus
+      version: 11.1.2
+      sourceRef:
+        kind: HelmRepository
+        name: docker
+      interval: 5m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  postRenderers:
+    - kustomize:
+        images:
+          - # docker.io/bitnami/alertmanager:0.28.1
+            name: docker.io/bitnami/alertmanager
+            digest: sha256:1f70287a0f146db4622d0a150acbfc2b43cb8446653fe7b3dd3b6f66f94348f8
+          - # docker.io/bitnami/blackbox-exporter:0.26.0
+            name: docker.io/bitnami/blackbox-exporter
+            digest: sha256:4193311020230da8c816c53ff34a31c3d038237fa32172119e58b6c4b135d556
+          - # docker.io/bitnami/prometheus:2.55.1
+            name: docker.io/bitnami/prometheus
+            digest: sha256:6361d1ca169571a9ad92d60c7a86d624e2478c5dd616752c9872ee319bd75892
+          - # docker.io/bitnami/prometheus-operator:0.81.0
+            name: docker.io/bitnami/prometheus-operator
+            digest: sha256:e1ab8eac6c47a68bb9e9a2772b9f3a9b229fa45b6a7bcaed5a36349205385ebb
+          - # docker.io/bitnami/thanos:0.37.2
+            name: docker.io/bitnami/thanos
+            digest: sha256:e33f3176d869f2c8e098dd02c12bdc75e82de33ed1c7a586decf9a5b10e95901
+  values:
+    operator:
+      resourcesPreset: none
+    prometheus:
+      resourcesPreset: none
+      persistence:
+        enabled: false
+      configReloader:
+        serviceMonitor:
+          enabled: true
+    alertmanager:
+      resourcesPreset: none
+      persistence:
+        enabled: false
+    exporters:
+      node-exporter:
+        enabled: false
+      kube-state-metrics:
+        enabled: false
+    blackboxExporter:
+      resourcesPreset: none
