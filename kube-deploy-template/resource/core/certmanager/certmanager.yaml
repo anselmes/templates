@@ -1,0 +1,56 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cm
+spec:
+  interval: 10m
+  releaseName: cm
+  timeout: 5m
+  chart:
+    spec:
+      chart: labsonline/charts/cert-manager
+      version: v1.17.1
+      sourceRef:
+        kind: HelmRepository
+        name: github
+      interval: 5m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  postRenderers:
+    - kustomize:
+        images:
+          - # quay.io/jetstack/cert-manager-acmesolver:v1.12.16
+            name: quay.io/jetstack/cert-manager-acmesolver
+            digest: sha256:37da334c56a409d03068113d88dc92d506e512046c72d4370dd380dbf2d84b5e
+          - # quay.io/jetstack/cert-manager-cainjector:v1.12.16
+            name: quay.io/jetstack/cert-manager-cainjector
+            digest: sha256:5d177d03d6273f043efa8121c722f557344a24a8525d8e73c87bbc2b0361c377
+          # - # fixme: quay.io/jetstack/cert-manager-controller:v1.12.16
+          #   name: quay.io/jetstack/cert-manager-controller
+          #   digest: sha256:5d954dd6714b2cf4342f2e6643328d1580d2524f32f15398a3b8593bb63108f5
+          - # quay.io/jetstack/cert-manager-startupapicheck:v1.16.4
+            name: quay.io/jetstack/cert-manager-startupapicheck
+            digest: sha256:55c3fe0d48ef58fc0291ab2fa8826e434dd423319427f70d393c210df35825ec
+          - # quay.io/jetstack/cert-manager-webhook:v1.12.16
+            name: quay.io/jetstack/cert-manager-webhook
+            digest: sha256:fae5deb0a09dc8c361a1d2c37908c5a1341abbf72f9b0e8399cd5d3f4674b84d
+  values:
+    enableCertificateOwnerRef: true
+    crds:
+      enabled: true
+    config:
+      apiVersion: controller.config.cert-manager.io/v1alpha1
+      kind: ControllerConfiguration
+      enableGatewayAPI: true
+    prometheus:
+      servicemonitor:
+        enabled: true

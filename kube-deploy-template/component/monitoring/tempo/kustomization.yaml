@@ -1,0 +1,15 @@
+---
+kind: Component
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
+labels:
+  - pairs:
+      owner: kubernetes
+      component: monitoring
+resources:
+  - ../../../resource/addon/sre/tempo
+patches:
+  - path: tempo.yaml

@@ -7,24 +7,9 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cicd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: observability
+  name: cloud
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: operators
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sre
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ucp

@@ -1,7 +1,12 @@
 ---
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
 resources:
-  - certmanager.yaml
+  - certmanager
+  - gateway
   - gatekeeper.yaml
-  - monitoring.yaml
-  - trustmanager.yaml
+  - metrics.yaml
   - namespace.yaml

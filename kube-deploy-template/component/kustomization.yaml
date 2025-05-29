@@ -1,21 +1,24 @@
 ---
-apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
 resources:
   - ../crd
-  - ../resource/addon/externaldns
-  - ../resource/addon/lgtm
   - ../resource/core
-  - defaultgw.yaml
-  - tlsgw.yaml
+  - ../resource/addon/cicd
+  # - ../resource/addon/sre
+  # - ../resource/addon/externaldns
+  # - ../resource/addon/lgtm
 patches:
+  # - path: clusterissuer.yaml
   - patch: |
       - op: add
-        path: /metadata/labels
+        path: /spec/values/global
         value:
-          gateway.kubernetes.io/name: default
-          pod-security.kubernetes.io/audit: baseline
-          pod-security.kubernetes.io/enforce: privileged
-          pod-security.kubernetes.io/warn: baseline
+          storageClass: general
     target:
-      kind: Namespace
+      kind: HelmRelease
+      name: flux

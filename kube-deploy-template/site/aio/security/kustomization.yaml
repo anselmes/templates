@@ -1,9 +1,12 @@
 ---
+kind: Kustomization
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
   labels:
-    csi: ceph
-resources: []
+    type: generated
+  annotations:
+    note: generated
+secretGenerator: []

@@ -1,0 +1,87 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: flux
+spec:
+  interval: 10m
+  releaseName: flux
+  timeout: 5m
+  chart:
+    spec:
+      chart: labsonline/charts/flux
+      version: 2.4.9
+      sourceRef:
+        kind: HelmRepository
+        name: github
+      interval: 5m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  postRenderers:
+    - kustomize:
+        images:
+          - # docker.io/bitnami/fluxcd-helm-controller:1.2.0
+            name: docker.io/bitnami/fluxcd-helm-controller
+            digest: sha256:28b650c3c612bc961252b4768b2d4cb06a4ab904a2d9cb6402d1590652b0d8a1
+          - # docker.io/bitnami/fluxcd-source-controller:1.5.0
+            name: docker.io/bitnami/fluxcd-source-controller
+            digest: sha256:b9233bca98ab393a06ecb60ccb9748570f33fe23549c8df9894ec0326a69ca4e
+  values:
+    kustomizeController:
+      enabled: false
+      installCRDs: false
+      resourcesPreset: none
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    helmController:
+      enabled: true
+      installCRDs: true
+      resourcesPreset: none
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    sourceController:
+      enabled: true
+      installCRDs: true
+      resourcesPreset: none
+      persistence:
+        enabled: true
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    notificationController:
+      enabled: false
+      installCRDs: false
+      resourcesPreset: none
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    imageAutomationController:
+      enabled: false
+      installCRDs: false
+      resourcesPreset: none
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    imageReflectorController:
+      enabled: false
+      installCRDs: false
+      resourcesPreset: none
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true

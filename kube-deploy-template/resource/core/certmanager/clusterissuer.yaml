@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ca
+spec:
+  interval: 10m
+  releaseName: ca
+  timeout: 5m
+  chart:
+    spec:
+      chart: labsonline/charts/ca-clusterissuer
+      version: 0.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: github
+      interval: 5m
+  dependsOn:
+    - name: cm
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  values:
+    manifests:
+      clusterissuer: false
+      secret_ca: false
+      selfsigned: true
+      webhook: false

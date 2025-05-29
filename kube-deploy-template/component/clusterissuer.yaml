@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ca
+  namespace: cert-manager
+spec:
+  values:
+    conf:
+      ca:
+        issuer:
+          name: ca-issuer
+        secret:
+          name: ca-issuer-creds
+      acme:
+        email: admin@kubernetes.io
+        server: https://acme-v02.api.letsencrypt.org/directory
+      # rfc2136:
+      #   namesever: 192.168.11.14:53
+      #   tsig:
+      #     name: tsig-secret
+      #     algo: HMACSHA512
+      # webhook:
+      #   group: acme.kubernetes.internal
+      #   solver: pdns
+      #   config:
+      #     host: http://192.168.11.14:8081
+      #     apiKeySecretRef:
+      #       name: ca-issuer-creds
+      #       key: token
+    manifests:
+      clusterissuer: false
+      # rfc2136: true
+      secret_ca: false
+      # webhook: true

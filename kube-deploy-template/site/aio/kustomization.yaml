@@ -1,0 +1,87 @@
+---
+kind: Kustomization
+namePrefix: aio-
+nameSuffix: -dev
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    owner: aio
+components:
+  - ../../component
+  # - ../component/cloudflare
+  # - ../component/codecloud
+  # - ../component/monitoring
+  # - ../component/monitoring/loki
+  # - ../component/monitoring/tempo
+  # - ../component/profile/cruiser
+  # - ../component/profile/harbor
+resources:
+  - ../../resource/core/csi/openebs
+  - network
+  - security
+patches:
+  - # namespaces
+    patch: |
+      - op: add
+        path: /metadata/labels
+        value:
+          gateway.kubernetes.io/name: default
+          pod-security.kubernetes.io/audit: baseline
+          pod-security.kubernetes.io/enforce: baseline
+          pod-security.kubernetes.io/warn: baseline
+    target:
+      kind: Namespace
+  # - # helmrepository
+  #   patch: |
+  #     - op: add
+  #       path: /spec/secretRef
+  #       value:
+  #         name: docker-creds
+  #   target:
+  #     kind: HelmRepository
+  #     name: docker
+  - # helmreleases
+    patch: |
+      - op: add
+        path: /spec/chart/spec/sourceRef/namespace
+        value: cicd
+      # - # fixme: merge instead of replacing
+      #   op: add
+      #   path: /spec/dependsOn
+      #   value:
+      #     - name: monitoring
+      #       namespace: sre
+    target:
+      kind: HelmRelease
+  # - # monitoring
+  #   patch: |
+  #     - op: remove
+  #       path: /spec/dependsOn
+  #       value:
+  #         - name: monitoring
+  #           namespace: sre
+  #     - # fixme: remove
+  #       op: add
+  #       path: /spec/values/test
+  #       value:
+  #         enabled: false
+  #     - # fixme: remove
+  #       op: add
+  #       path: /spec/values/configAnalysis
+  #       value:
+  #         enabled: false
+  #   target:
+  #     kind: HelmRelease
+  #     name: monitoring
+replacements:
+  - source:
+      kind: HelmRepository
+      name: github
+    targets:
+      - select:
+          kind: HelmRelease
+        fieldPaths:
+          - spec.chart.spec.sourceRef.name
