@@ -1,15 +1,33 @@
-# Templates
+# Knative Service Deployment Template
 
-A collection of templates for various development and deployment scenarios.
+A template for deploying services using Knative.
 
-## Contents
+## Features
 
-- gRPC Service Template: Template for creating gRPC services
-- Knative Service Deploy Template: Template for deploying services using Knative
-- Kubernetes Deploy Template: Template for deploying applications to Kubernetes clusters
-- Linux Kernel Module Template: Template for developing Linux kernel modules
-- Yocto Linux Template: Template for building custom Linux distributions using the Yocto Project
-- Zephyr Swift Template: Template for Zephyr RTOS applications using Swift
+- Easy-to-use Knative service template
+- Customizable configuration
+- Ready for CI/CD integration
+
+## Getting Started
+
+1. Clone this repository:
+
+    ```shell
+    git clone https://github.com/your-org/kn-svc-template.git
+    ```
+
+2. Customize the service YAML files as needed.
+
+3. Deploy to your Knative cluster:
+
+    ```shell
+    kubectl apply -f service.yaml
+    ```
+
+## Requirements
+
+- Kubernetes cluster with Knative installed
+- `kubectl` configured for your cluster
 
 ## License
 

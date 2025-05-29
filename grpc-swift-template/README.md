@@ -1,44 +1,48 @@
-# Zephyr Template (Swift)
+# gRPC Service Template (Swift)
 
-A template for developing Zephyr RTOS applications using Swift.
+This template provides a starting point for building gRPC services in Swift.
+
+## Features
+
+- Swift Package Manager support
+- Example gRPC service and client
+- Ready-to-use project structure
 
 ## Getting Started
 
 1. **Clone the repository:**
 
-   ```shell
-   git clone <repo-url>
-   cd zephyr-swift-template
-   ```
+    ```shell
+    git clone <repository-url>
+    cd grpc-swift-template
+    ```
 
-2. **Set up environment variables:**
+2. **Install dependencies:**
 
-   ```shell
-   cp -f example.env .env
-   source .env
-   source ./scripts/loadenv.sh
-   ```
+    ```shell
+    swift package resolve
+    ```
 
-3. **Install dependencies:**
+3. **Build the project:**
 
-   - Ensure you have [Zephyr SDK](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-the-zephyr-sdk) and [west](https://docs.zephyrproject.org/latest/develop/west/index.html) installed.
-   - Install Swift toolchain if not already available.
+    ```shell
+    swift build
+    ```
 
-## Build
+4. **Run the server or client:**
 
-Build the Zephyr project for your board:
+    <!-- TODO: run -->
 
-```shell
-west build -p
-```
+## Project Structure
 
-## Flash
+- `Sources/`    - Source code for server and client
+- `Sources/api` - Protocol Buffer definitions
+- `README.md`   - Project documentation
 
-Flash the compiled firmware to your board:
+## Requirements
 
-```shell
-west flash
-```
+- Swift 5.5 or later
+- [Swift gRPC](https://github.com/grpc/grpc-swift)
 
 ## License
 

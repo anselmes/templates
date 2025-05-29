@@ -1,15 +1,45 @@
-# Templates
+# Linux Kernel Module (Rust)
 
-A collection of templates for various development and deployment scenarios.
+A template for building Linux Kernel Modules (LKMs) in Rust.
 
-## Contents
+## Features
 
-- gRPC Service Template: Template for creating gRPC services
-- Knative Service Deploy Template: Template for deploying services using Knative
-- Kubernetes Deploy Template: Template for deploying applications to Kubernetes clusters
-- Linux Kernel Module Template: Template for developing Linux kernel modules
-- Yocto Linux Template: Template for building custom Linux distributions using the Yocto Project
-- Zephyr Swift Template: Template for Zephyr RTOS applications using Swift
+- Boilerplate setup for Rust-based LKMs
+- Example module code
+- Build scripts and instructions
+
+## Getting Started
+
+1. **Clone the repository:**
+
+    ```shell
+    git clone https://github.com/yourusername/lkm-rust-template.git
+    cd lkm-rust-template
+    ```
+
+2. **Build the module:**
+
+    ```shell
+    make
+    ```
+
+3. **Insert the module:**
+
+    ```shell
+    sudo insmod target/lkm_rust_template.ko
+    ```
+
+4. **Check kernel logs:**
+
+    ```shell
+    dmesg | tail
+    ```
+
+## Requirements
+
+- Rust toolchain (nightly)
+- Linux kernel headers
+- `make`, `gcc`
 
 ## License
 
