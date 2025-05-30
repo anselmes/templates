@@ -6,16 +6,28 @@ metadata:
 spec:
   values:
     cilium:
-      pool:
-        cidr: 172.16.254.0/24
+      advert:
+        bgp:
+          enabled: false
+        l2:
+          enabled: false
       config:
         cluster:
-          instances:
-            - name: cilium
-              localASN: 65000
-              peers:
-                - name: peer-1
-                  peerASN: 65000
-                  peerAddress: fd00:10:0:0::1
-                  peerConfigRef:
-                    name: cni-resources-peer-config
+          enabled: false
+          # instances:
+          #   - name: cilium
+          #     localASN: 65000
+          #     peers:
+          #       - name: peer-1
+          #         peerASN: 65000
+          #         peerAddress: fd00:10:0:0::1
+          #         peerConfigRef:
+          #           name: cni-resources-peer-config
+        peer:
+          enabled: false
+      pool:
+        cidr: 172.16.254.0/24
+        l2:
+          enabled: false
+        bgp:
+          enabled: false

@@ -13,5 +13,5 @@ spec:
             name: kube-system/aio-default-dev
             service: kube-system/cilium-gateway-aio-default-dev
           internal:
-            name: kube-system/aio-knative-dev
-            service: kube-system/cilium-gateway-aio-knative-dev
+            name: kube-system/aio-default-dev
+            service: kube-system/cilium-gateway-aio-default-dev

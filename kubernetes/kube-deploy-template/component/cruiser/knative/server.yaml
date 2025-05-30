@@ -7,11 +7,3 @@ spec:
   values:
     knative:
       domain: kn.local
-    ca-issuer:
-      conf:
-        ca:
-          issuer:
-            name: self-signed-ca-issuer #kn-ca-clusterissuer
-      manifests:
-        issuer: false
-        selfsigned: true

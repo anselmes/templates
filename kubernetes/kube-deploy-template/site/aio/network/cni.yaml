@@ -13,6 +13,6 @@ spec:
       replicas: 1
     # ipam:
     #   mode: kubernetes
-    # gatewayAPI:
-    #   hostNetwork:
-    #     enabled: true
+    gatewayAPI:
+      hostNetwork:
+        enabled: true

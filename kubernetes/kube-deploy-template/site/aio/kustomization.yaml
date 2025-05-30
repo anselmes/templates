@@ -96,3 +96,19 @@ patches:
   #   target:
   #     kind: HelmRelease
   #     name: monitoring
+  - patch: |
+      - op: replace
+        path: /spec/listeners/1/hostname
+        value: "*.aio.local"
+    target:
+      kind: Gateway
+      name: default
+  - target:
+      kind: Gateway
+      name: knative|grpc|tls
+    patch: |
+      $patch: delete
+      apiVersion: APIVERSION
+      kind: KIND
+      metadata:
+        name: NAME

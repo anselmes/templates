@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: labsonline/charts/knative-eventing
-      version: 0.3.0
+      version: 0.4.0
       sourceRef:
         kind: HelmRepository
         name: github
@@ -37,7 +37,20 @@ spec:
       defaultBrokerClass: MTChannelBasedBroker
     config:
       broker:
-        enabled: "true"
+        enabled: true
+        spec:
+          config:
+            default-br-config: |
+              clusterDefault:
+                apiVersion: v1
+                kind: ConfigMap
+                name: config-br-default-channel
+                namespace: knative
+                brokerClass: MTChannelBasedBroker
+                delivery:
+                  backoffDelay: PT0.2S
+                  backoffPolicy: exponential
+                  retry: 10
     sources:
       ceph:
         enabled: false
