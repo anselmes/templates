@@ -1,0 +1,17 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: knative-serving
+spec:
+  values:
+    knative:
+      domain: kn.local
+    ca-issuer:
+      conf:
+        ca:
+          issuer:
+            name: self-signed-ca-issuer #kn-ca-clusterissuer
+      manifests:
+        issuer: false
+        selfsigned: true

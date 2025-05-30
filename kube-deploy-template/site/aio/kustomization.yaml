@@ -11,18 +11,38 @@ generatorOptions:
     owner: aio
 components:
   - ../../component
-  # - ../component/cloudflare
-  # - ../component/codecloud
-  # - ../component/monitoring
-  # - ../component/monitoring/loki
-  # - ../component/monitoring/tempo
-  # - ../component/profile/cruiser
-  # - ../component/profile/harbor
+  - ../../component/cruiser
+  # - ../../component/cloudflare
+  # - ../../component/harbor
 resources:
   - ../../resource/core/csi/openebs
   - network
   - security
+replacements:
+  - source:
+      kind: HelmRepository
+      name: github
+    targets:
+      - select:
+          kind: HelmRelease
+        fieldPaths:
+          - spec.chart.spec.sourceRef.name
+  - source:
+      kind: HelmRelease
+      name: knative-operator
+    targets:
+      - select:
+          kind: HelmRelease
+          name: knative-eventing
+        fieldPaths:
+          - spec.dependsOn.1.name
+      - select:
+          kind: HelmRelease
+          name: knative-serving
+        fieldPaths:
+          - spec.dependsOn.0.name
 patches:
+  - path: knativeserver.yaml
   - # namespaces
     patch: |
       - op: add
@@ -76,12 +96,3 @@ patches:
   #   target:
   #     kind: HelmRelease
   #     name: monitoring
-replacements:
-  - source:
-      kind: HelmRepository
-      name: github
-    targets:
-      - select:
-          kind: HelmRelease
-        fieldPaths:
-          - spec.chart.spec.sourceRef.name

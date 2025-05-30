@@ -10,3 +10,4 @@ resources:
   - ../../../resource/core/cni/resource
 patches:
   - path: cni.yaml
+  - path: cni-resource.yaml

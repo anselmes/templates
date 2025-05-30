@@ -1,9 +1,13 @@
 ---
-namespace: knative
+kind: Component
 buildMetadata:
   - managedByLabel
   - originAnnotations
 generatorOptions:
   disableNameSuffixHash: true
-resources:
-  - event.yaml
+  labels:
+    component: cruiser
+components:
+  - knative
+  # - cloud
+  # - cloudvisor

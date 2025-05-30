@@ -9,4 +9,5 @@ generatorOptions:
     cert-manager.io/cluster-issuer: ca-issuer-self-signed
 resources:
   - gateway.yaml
+  - grpc.yaml
   - tlsgw.yaml

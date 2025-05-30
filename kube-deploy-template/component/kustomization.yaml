@@ -10,8 +10,7 @@ resources:
   - ../resource/core
   - ../resource/addon/cicd
   # - ../resource/addon/sre
-  # - ../resource/addon/externaldns
-  # - ../resource/addon/lgtm
+  # - ../resource/addon/ucp
 patches:
   # - path: clusterissuer.yaml
   - patch: |

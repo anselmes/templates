@@ -5,7 +5,7 @@ metadata:
   name: knative
   namespace: knative
   annotations:
-    cert-manager.io/cluster-issuer: self-signed-ca-issuer
+    cert-manager.io/cluster-issuer: ca-clusterissuer-self-signed
 spec:
   gatewayClassName: cilium
   listeners:
@@ -18,7 +18,7 @@ spec:
     - name: https
       port: 443
       protocol: HTTPS
-      hostname: "*.svc.local"
+      hostname: "*.kn.local"
       allowedRoutes:
         namespaces:
           from: All

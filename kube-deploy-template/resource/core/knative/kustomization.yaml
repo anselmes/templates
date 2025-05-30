@@ -1,4 +1,9 @@
 ---
+buildMetadata:
+  - managedByLabel
+  - originAnnotations
+generatorOptions:
+  disableNameSuffixHash: true
 resources:
   - namespace.yaml
   - operator.yaml

@@ -8,5 +8,6 @@ generatorOptions:
 resources:
   - certmanager.yaml
   - clusterissuer.yaml
+  - namespace.yaml
   # - trustmanager.yaml
   # - webhook.yaml
