@@ -9,8 +9,8 @@ import PackageDescription
 /// - An API library target containing the generated service definitions
 /// - An executable target that implements and runs the service
 let package = Package(
-  name: "service",  // The name of the package
-  platforms: [.macOS(.v15)],  // Requires macOS 15 (Sequoia) or later
+  name: "grpc-swift-template",
+  platforms: [.macOS(.v15)],
 
   // Products define the libraries or executables produced by this package
   products: [
@@ -34,7 +34,7 @@ let package = Package(
   targets: [
     // Main executable target that runs the gRPC service
     .executableTarget(
-      name: "svc",  // The name of the compiled binary
+      name: "server",
       dependencies: [
         .product(name: "ArgumentParser", package: "swift-argument-parser"), // Command line argument parsing
 

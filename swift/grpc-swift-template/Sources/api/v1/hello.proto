@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Schubert Anselme <schubert@anselm.es>
+// SPDX-Licence-Identifier: GPL-3.0
+
 /**
  * @file hello.proto
  * @brief Defines the Greeter gRPC service and associated messages for sending greetings.
