@@ -10,10 +10,11 @@ cmake_minimum_required(VERSION 3.29)
 
 # ==== Environment Configuration ====
 # Retrieve build configuration from environment variables
-set(BOARD $ENV{ZEPHYR_BOARD})              # Target board for the application
-set(BUILD_TARGET $ENV{ZEPHYR_BUILD_TARGET})        # Target triple (e.g., arm-none-eabi)
-set(CROSS_COMPILE $ENV{CROSS_COMPILE})             # Cross-compiler prefix
-set(DTC_OVERLAY_FILE $ENV{ZEPHYR_BOARD_OVERLAY})   # Device Tree overlay file
+set(BOARD $ENV{ZEPHYR_BOARD})                                 # Target board for the application
+set(BUILD_TARGET $ENV{ZEPHYR_BUILD_TARGET})                   # Target triple (e.g., arm-none-eabi)
+set(CROSS_COMPILE $ENV{CROSS_COMPILE})                        # Cross-compiler prefix
+set(DTC_OVERLAY_FILE $ENV{ZEPHYR_BOARD_OVERLAY})              # Device Tree overlay file
+set(SYSROOT_DIR $ENV{SYSROOT_DIR})                            # Sysroot directory for cross-compilation
 set(ZEPHYR_TOOLCHAIN_VARIANT $ENV{ZEPHYR_TOOLCHAIN_VARIANT})  # Toolchain variant name
 
 # ==== Zephyr Integration ====
@@ -57,7 +58,7 @@ add_compile_options(
 
 # ==== C Support Files ====
 # Add C stubs required for Swift/C interoperability
-target_sources(app PRIVATE src/Stubs.c)
+target_sources(app PRIVATE src/Stubs.c)  # Include C stubs for bridging Swift and C.
 
 # ==== Swift Library Configuration ====
 # Create an OBJECT library for Swift main source file
@@ -73,11 +74,26 @@ add_library(${PROJECT_NAME} OBJECT
 # This is crucial as Swift code might depend on these generated headers.
 add_dependencies(${PROJECT_NAME} syscall_list_h_target)
 
+# ==== Swift Include Directories ====
+# Set implicit include directories for Swift
+# These directories are automatically included in the Swift compilation process
+# This is necessary to ensure Swift can find all required headers.
+# set(SWIFT_INCLUDES)
+# foreach(dir ${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES})
+#     string(CONCAT SWIFT_INCLUDES ${SWIFT_INCLUDES} "-Xcc ")
+#     string(CONCAT SWIFT_INCLUDES ${SWIFT_INCLUDES} "-I${dir} ")
+# endforeach()
+# foreach(dir ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+#     string(CONCAT SWIFT_INCLUDES ${SWIFT_INCLUDES} "-Xcc ")
+#     string(CONCAT SWIFT_INCLUDES ${SWIFT_INCLUDES} "-I${dir} ")
+# endforeach()
+
 # ==== Swift-Specific Compiler Options ====
 # Add specific compile options for Swift language
 target_compile_options(${PROJECT_NAME} PRIVATE
   "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-parse-as-library>"  # Process Swift files as libraries rather than executables
   "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Osize>"             # Optimize for binary size (important for embedded)
+  # "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${SWIFT_INCLUDES}>"  # Include directories for Swift compilation
   "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-import-bridging-header ${CMAKE_CURRENT_LIST_DIR}/include/BridgingHeader.h>" # Bridge to C APIs
 )
 
