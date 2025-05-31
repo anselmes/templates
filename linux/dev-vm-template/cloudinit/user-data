@@ -3,11 +3,15 @@
 # during its first boot. It includes settings for system configuration, package
 # installation, file creation, and custom scripts.
 
+# Metadata for the VM
+fqdn: devm.example.com  # Set the fully qualified domain name
+hostname: devm  # Set the hostname for the VM
+
 # General system configuration
-manage_etc_hosts: true  # Ensure /etc/hosts is managed by cloud-init
-package_update: true    # Update package lists
-package_upgrade: true   # Upgrade installed packages
-timezone: America/Toronto  # Set the system timezone
+manage_etc_hosts: true      # Ensure /etc/hosts is managed by cloud-init
+package_update: true        # Update package lists
+package_upgrade: true       # Upgrade installed packages
+timezone: America/Toronto   # Set the system timezone
 
 # Disk partition growth configuration
 growpart:
