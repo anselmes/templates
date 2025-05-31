@@ -1,0 +1,8 @@
+# This file is a cloud-init metadata configuration file.
+# It provides instance-specific metadata for the virtual machine.
+
+# Unique identifier for the instance
+instance-id: devm
+
+# Hostname for the virtual machine
+local-hostname: devm
