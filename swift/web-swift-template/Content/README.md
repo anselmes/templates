@@ -1,32 +1,21 @@
-# Web Page Template (Swift)
+# Readme
 
-A starter template for building web applications using Swift.
+This is a Swift web project template.
+
+## Features
+
+- Pre-configured for web development in Swift
+- Easy to customize and extend
 
 ## Getting Started
 
-1. Clone this repository:
+1. Clone the repository.
+2. Install dependencies.
+3. Run the project:
 
-    ```sh
-    git clone https://github.com/yourusername/web-swift-template.git
-    cd web-swift-template
-    ```
-
-2. Build the project:
-
-    ```sh
-    swift build
-    ```
-
-3. Run the development server:
-
-    ```sh
-    swift run
-    ```
-
-## Requirements
-
-- Swift 5.7 or later
-- macOS or Linux
+  ```bash
+  swift run
+  ```
 
 ## License
 
