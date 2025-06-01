@@ -6,7 +6,7 @@
 /// This struct serves as the application's entry point and contains
 /// the main execution loop for the program.
 @main
-public struct Main {
+public struct Entrypoint {
   /// The primary entry function for the application.
   ///
   /// This function is automatically called when the program starts.
