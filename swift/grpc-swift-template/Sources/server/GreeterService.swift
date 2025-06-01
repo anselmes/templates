@@ -27,9 +27,7 @@ struct GreaterService: AsyncParsableCommand {
   /// 2. Registers the Greeter service
   /// 3. Starts the server in the background
   /// 4. Prints the active listening address
-  ///
-  /// - Throws: An error if the server fails to start or encounters problems
-  func run() async throws {
+  func run() async {
     // Create a new gRPC server with HTTP/2 transport
     let server = GRPCServer(
       transport: .http2NIOPosix(
@@ -39,15 +37,19 @@ struct GreaterService: AsyncParsableCommand {
       services: [Greeter()]  // Register our Greeter service implementation
     )
 
-    // Start the server and wait for it to complete
-    try await withThrowingDiscardingTaskGroup { group in
-      // Launch the server in a background task
-      group.addTask { try await server.serve() }
+    do {
+      // Start the server and wait for it to complete
+      try await withThrowingDiscardingTaskGroup { group in
+        // Launch the server in a background task
+        group.addTask { try await server.serve() }
 
-      // Once the server is ready, print the listening address
-      if let address = try await server.listeningAddress {
-        print("Greeter listening on \(address)")
+        // Once the server is ready, print the listening address
+        if let address = try await server.listeningAddress {
+          print("Greeter listening on \(address)")
+        }
       }
+    } catch {
+      fatalError(error.localizedDescription)
     }
   }
 }
