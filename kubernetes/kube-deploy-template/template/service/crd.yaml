@@ -1,0 +1,31 @@
+---
+# API version and kind of the resource
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+
+# Metadata for the Helm release
+metadata:
+  name: crd-1-0-0-tpl  # Name of the Helm release
+
+# Specification of the Helm release
+spec:
+  interval: 10m0s  # Interval for reconciliation
+  releaseName: crd-1-0-0-tpl  # Name of the release in Helm
+  chartRef:
+    kind: HelmChart  # Reference to the Helm chart
+    name: crd-1-0-0-tpl  # Name of the chart
+---
+# API version and kind of the resource
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+
+# Metadata for the Helm chart
+metadata:
+  name: crd-1-0-0-tpl  # Name of the Helm chart
+
+# Specification of the Helm chart
+spec:
+  interval: 10m0s  # Interval for reconciliation
+  chart: crd-service-template  # Name of the chart
+  version: 1.0.0  # Version of the chart
+  reconcileStrategy: ChartVersion  # Strategy for reconciliation

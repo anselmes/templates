@@ -1,0 +1,43 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1  # Specifies the API version of the resource
+kind: MultiClusterService  # Defines the type of resource being created
+
+# Metadata for the resource
+metadata:
+  name: crd  # Name of the multi-cluster service resource
+
+# Specification of the multi-cluster service
+spec:
+  clusterSelector:  # Selector to identify target clusters
+    matchLabels:
+      app.kubernetes.io/managed-by: Helm  # Label indicating the resource is managed by Helm
+  serviceSpec:  # Specification of the services
+    priority: 100  # Priority of the service
+    services:
+      - template: external-snapshotter-crd  # Template for the external snapshotter service
+        name: external-snapshotter-crd  # Name of the external snapshotter service
+        namespace: kube-system  # Namespace of the external snapshotter service
+      - template: gateway-api-crd  # Template for the Gateway API service
+        name: gateway-api-crd  # Name of the Gateway API service
+        namespace: kube-system  # Namespace of the Gateway API service
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1  # Specifies the API version of the resource
+kind: MultiClusterService  # Defines the type of resource being created
+
+# Metadata for the resource
+metadata:
+  name: global  # Name of the multi-cluster service resource
+
+# Specification of the multi-cluster service
+spec:
+  clusterSelector:  # Selector to identify target clusters
+    matchLabels:
+      app.kubernetes.io/managed-by: Helm  # Label indicating the resource is managed by Helm
+  serviceSpec:  # Specification of the services
+    priority: 100  # Priority of the service
+    services:
+      - template: cert-manager-1-17-2  # Template for the cert-manager service
+        name: cert-manager  # Name of the cert-manager service
+        namespace: cert-manager  # Namespace of the cert-manager service

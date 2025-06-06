@@ -1,0 +1,13 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1
+kind: ClusterTemplateChain
+
+# Metadata for the resource
+metadata:
+  name: remote-cluster  # Name of the cluster template chain
+
+# Specification of the cluster template chain
+spec:
+  supportedTemplates:  # List of supported templates
+    - name: remote-cluster-1-0-0  # Name of the supported template

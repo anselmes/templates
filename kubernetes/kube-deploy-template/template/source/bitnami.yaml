@@ -1,0 +1,16 @@
+---
+# API version and kind of the resource
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+
+# Metadata for the resource
+metadata:
+  name: bitnami-catalog  # Name of the Helm repository
+  annotations:
+    helm.sh/hook: pre-install  # Hook to run before installation
+    helm.sh/resource-policy: keep  # Policy to retain the resource on deletion
+
+# Specification of the Helm repository
+spec:
+  type: oci  # Type of the repository (OCI-compliant)
+  url: oci://docker.io/bitnami/charts  # URL of the OCI repository

@@ -1,0 +1,32 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1  # Specifies the API version of the resource
+kind: AccessManagement  # Defines the type of resource being created
+
+# Metadata for the resource
+metadata:
+  name: kcm  # Name of the access management resource
+
+# Specification of access rules
+spec:
+  accessRules:
+    - serviceTemplateChains:  # Defines chains of service templates to apply
+        - core  # Core service template chain
+        - crd  # Custom Resource Definition service template chain
+      targetNamespaces:  # Specifies the namespaces where the rules will be applied
+        list:
+          - default  # Default namespace for the rules
+    - clusterTemplateChains:  # Defines chains of cluster templates to apply
+        - adopted-cluster  # Template chain for adopted clusters
+        - docker-hosted-cp  # Template chain for Docker-hosted control planes
+        - remote-cluster  # Template chain for remote clusters
+      targetNamespaces:  # Target namespaces for the rules
+        list:
+          - default
+    - credentials:  # Placeholder for credential configurations
+        - adopted-cluster-cred
+        - docker-cluster-cred
+        - remote-cluster-cred
+      targetNamespaces:
+        list:
+          - default

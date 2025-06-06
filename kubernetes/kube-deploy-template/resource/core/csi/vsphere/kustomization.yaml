@@ -1,9 +1,0 @@
----
-buildMetadata:
-  - managedByLabel
-  - originAnnotations
-generatorOptions:
-  disableNameSuffixHash: true
-  labels:
-    csi: vsphere
-resources: []

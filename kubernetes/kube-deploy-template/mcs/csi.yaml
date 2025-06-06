@@ -1,0 +1,26 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1  # Specifies the API version of the resource
+kind: MultiClusterService  # Defines the type of resource being created
+
+# Metadata for the resource
+metadata:
+  name: csi  # Name of the multi-cluster service resource
+
+# Specification of the multi-cluster service
+spec:
+  clusterSelector:  # Selector to identify target clusters
+    matchLabels:
+      app.kubernetes.io/csi: openebs  # Label indicating the resource is related to OpenEBS CSI
+  serviceSpec:  # Specification of the services
+    priority: 100  # Priority of the service
+    services:
+      - template: csi-1-0-0  # Template for the CSI service
+        name: csi  # Name of the CSI service
+        namespace: kube-system  # Namespace of the CSI service
+        values: |  # Additional configuration values for the service
+          openebs:
+            csi:
+              volumeSnapshots:
+                enabled: true  # Enable volume snapshots
+                keep: false  # Do not retain snapshots

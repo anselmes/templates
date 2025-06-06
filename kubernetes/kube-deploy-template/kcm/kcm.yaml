@@ -1,0 +1,46 @@
+# API version and kind of the resource
+apiVersion: helm.toolkit.fluxcd.io/v2  # Specifies the API version of the HelmRelease resource
+kind: HelmRelease  # Defines the type of resource being created
+
+# Metadata for the resource
+metadata:
+  name: kcm  # Name of the Helm release
+
+# Specification of the Helm release
+spec:
+  releaseName: kcm  # Name of the release in Helm
+  chartRef:
+    kind: HelmChart  # Reference to the Helm chart
+    name: kcm-1-0-0  # Name of the chart
+    namespace: kcm-system  # Namespace where the chart is located
+  values:
+    replicas: 1  # Number of replicas for the deployment
+    controller:
+      enableTelemetry: false  # Disable telemetry for the controller
+    cert-manager:
+      enableCertificateOwnerRef: true  # Enable owner references for certificates
+      crds:
+        enabled: true  # Enable CRDs for cert-manager
+        keep: false  # Do not retain CRDs on deletion
+      config:
+        apiVersion: controller.config.cert-manager.io/v1alpha1  # API version for cert-manager configuration
+        kind: ControllerConfiguration  # Kind of the configuration
+        enableGatewayAPI: true  # Enable Gateway API support
+    flux2:
+      helmController:
+        create: true  # Create the Helm controller
+        container:
+          additionalArgs:
+            - --watch-label-selector=k0rdent.mirantis.com/managed=true  # Watch resources with this label
+      kustomizeController:
+        create: true  # Create the Kustomize controller
+        container:
+          additionalArgs:
+            - --watch-label-selector=k0rdent.mirantis.com/managed=true  # Watch resources with this label
+      sourceController:
+        create: true  # Create the Source controller
+        persistence:
+          enabled: true  # Enable persistence for the Source controller
+        container:
+          additionalArgs:
+            - --watch-label-selector=k0rdent.mirantis.com/managed=true  # Watch resources with this label

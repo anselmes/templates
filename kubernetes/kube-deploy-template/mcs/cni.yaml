@@ -1,0 +1,38 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1  # Specifies the API version of the resource
+kind: MultiClusterService  # Defines the type of resource being created
+
+# Metadata for the resource
+metadata:
+  name: cni  # Name of the multi-cluster service resource
+
+# Specification of the multi-cluster service
+spec:
+  clusterSelector:  # Selector to identify target clusters
+    matchLabels:
+      app.kubernetes.io/cni: cilium  # Label indicating the resource is related to Cilium CNI
+  serviceSpec:  # Specification of the services
+    priority: 100  # Priority of the service
+    services:
+      - template: cni-1-0-0  # Template for the CNI service
+        name: cni  # Name of the CNI service
+        namespace: kube-system  # Namespace of the CNI service
+        values: |  # Additional configuration values for the service
+          kubeProxyReplacement: true  # Enable kube-proxy replacement
+          bgpControlPlane:
+            enabled: false  # Disable BGP control plane
+          gatewayAPI:
+            enabled: true  # Enable Gateway API
+            gatewayClass:
+              create: "true"  # Create a Gateway class
+              hostNetwork:
+                enabled: true  # Enable host networking for the Gateway
+          envoy:
+            securityContext:
+              capabilities:
+                keepCapNetBindService: true  # Retain NET_BIND_SERVICE capability
+                envoy:
+                  - NET_ADMIN  # Grant NET_ADMIN capability
+                  - NET_BIND_SERVICE  # Grant NET_BIND_SERVICE capability
+                  - SYS_ADMIN  # Grant SYS_ADMIN capability

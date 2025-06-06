@@ -1,0 +1,50 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1
+kind: MultiClusterService
+
+# Metadata for the resource
+metadata:
+  name: mgmt-mcs  # Name of the multi-cluster service resource
+
+# Specification of the multi-cluster service
+spec:
+  clusterSelector:  # Selector to identify target clusters
+    matchLabels:
+      k0rdent.mirantis.com/management-cluster: "true"  # Label indicating a management cluster
+      sveltos-agent: present  # Label indicating the presence of a Sveltos agent
+  serviceSpec:  # Specification of the services
+    priority: 100  # Priority of the service
+    services:
+      - template: external-snapshotter-crd  # Template for the service
+        name: external-snapshotter-crd  # Name of the service
+        namespace: kube-system  # Namespace of the service
+      - template: gateway-api-experimental-crd  # Template for the service
+        name: gateway-api-experimental-crd  # Name of the service
+        namespace: kube-system  # Namespace of the service
+      - template: cni-1-0-0  # Template for the service
+        name: cni  # Name of the service
+        namespace: kube-system  # Namespace of the service
+        values: |
+          cilium:
+            bgpControlPlane:
+              enabled: false
+            gatewayAPI:
+              gatewayClass:
+                create: "true"
+                hostNetwork:
+                  enabled: true
+            operator:
+              replicas: 1
+      - template: csi-1-0-0
+        name: csi
+        namespace: kube-system
+        values: |
+          openebs:
+            csi:
+              volumeSnapshots:
+                enabled: true
+                keep: false
+          localpv-provisioner:
+            hostpathClass:
+              name: general

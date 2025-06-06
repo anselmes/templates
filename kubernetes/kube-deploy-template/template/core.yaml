@@ -1,0 +1,15 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1
+kind: ServiceTemplateChain
+
+# Metadata for the resource
+metadata:
+  name: core  # Name of the service template chain
+
+# Specification of the service template chain
+spec:
+  supportedTemplates:  # List of supported templates
+    - name: cert-manager-1-17-2  # Cert-manager template
+    - name: cni-1-0-0  # CNI template
+    - name: csi-1-0-0  # CSI template

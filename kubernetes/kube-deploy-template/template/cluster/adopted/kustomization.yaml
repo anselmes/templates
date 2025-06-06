@@ -1,0 +1,24 @@
+---
+# Namespace for the resources defined in this kustomization
+namespace: kcm-system
+
+# Metadata to include in the generated resources
+buildMetadata:
+  - managedByLabel  # Adds a label indicating the manager of the resource
+  - originAnnotations  # Adds annotations indicating the origin of the resource
+
+generatorOptions:
+  disableNameSuffixHash: true  # Prevents appending a hash to resource names
+  labels:
+    k0rdent.mirantis.com/component: kcm  # Label indicating the component
+  annotations:
+    projectsveltos.io/template: "true"  # Annotation indicating a template
+
+# Secret generator configuration
+secretGenerator:
+  - name: adopted-cluster-secret  # Name of the generated secret
+
+# List of resources to include in this kustomization
+resources:
+  - adopted-cluster.yaml  # Cluster template chain for adopted clusters
+  - credential.yaml  # Credential for adopted clusters

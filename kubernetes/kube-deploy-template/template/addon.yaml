@@ -1,0 +1,12 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1
+kind: ServiceTemplateChain
+
+# Metadata for the resource
+metadata:
+  name: addon  # Name of the service template chain
+
+# Specification of the service template chain
+spec:
+  supportedTemplates: []  # No supported templates are currently defined

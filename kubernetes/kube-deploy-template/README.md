@@ -1,47 +1,160 @@
-# Kubernetes Workload Deployment Template
+# Kubernetes Deployment Template
 
-A template repository for deploying applications to Kubernetes clusters.
+This repository demonstrates how to set up a Kubernetes cluster using `kind`, install Cilium, deploy KCM (Kubernetes Cluster Manager), and manage workloads.
 
-## Features
+## Table of Contents
 
-- Sample Kubernetes manifests in `components/`, `crd/`, and `resource/`
-- Example site or documentation files in `site/`
-- Helm chart integration (optional)
-- CI/CD pipeline suggestions
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Setup Instructions](#setup-instructions)
+  - [1. Generate Kind Config File](#1-generate-kind-config-file)
+  - [2. Create Management Cluster](#2-create-management-cluster)
+  - [3. Remove Default StorageClass](#3-remove-default-storageclass)
+  - [4. Install Cilium](#4-install-cilium)
+  - [5. Install KCM](#5-install-kcm)
+  - [6. Deploy Management Workload](#6-deploy-management-workload)
+  - [7. Create Workload Cluster](#7-create-workload-cluster)
+- [Troubleshooting](#troubleshooting)
 
-## Getting Started
+---
 
-1. **Clone this repository:**
+## Overview
 
-    ```shell
-    git clone https://github.com/your-org/kube-deploy-template.git
-    cd kube-deploy-template
-    ```
+This guide walks you through setting up a Kubernetes environment using `kind` (Kubernetes in Docker) and deploying workloads with KCM. It includes optional steps for customizing your setup.
 
-2. **Customize manifests:**
+---
 
-    - Edit files in the `components/`, `crd/`, and `resource/` directories to match your application's requirements.
-    - You can add or modify Kubernetes resources as needed.
+## Prerequisites
 
-3. **Deploy to your cluster:**
+Before starting, ensure you have the following installed on your system:
 
-    <!-- TODO: deploy -->
+- [Docker](https://www.docker.com/)
+- [Kind](https://kind.sigs.k8s.io/)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Helm](https://helm.sh/)
+- [Cilium CLI](https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/)
 
-## Directory Structure
+---
 
-```text
-.
-├── components/      # Application components
-├── crd/             # Custom Resource Definitions
-├── resource/        # Additional Kubernetes resources
-├── site/            # Site or documentation files
-└── README.md        # Project documentation
+## Setup Instructions
+
+### 1. Generate Kind Config File
+
+Run the following command to generate a `kind` configuration file:
+
+```shell
+stat /tmp/kind.yaml >/dev/null 2>&1 ||
+cat <<EOF >/tmp/kind.yaml
+---
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+name: kind
+networking:
+  apiServerAddress: 127.0.0.1
+  apiServerPort: 6443
+  disableDefaultCNI: true
+  ipFamily: ipv4
+featureGates:
+  UserNamespacesSupport: true
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+        listenAddress: 0.0.0.0
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+        listenAddress: 0.0.0.0
+EOF
 ```
 
-## Requirements
+### 2. Create Management Cluster
 
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- Access to a Kubernetes cluster
+Create a management cluster using the generated configuration:
+
+```shell
+grep -qa k0rdent-management-local <(kind get clusters) >/dev/null 2>&1 ||
+kind create cluster \
+  --config /tmp/kind.yaml \
+  --name k0rdent-management-local
+```
+
+### 3. Remove Default StorageClass
+
+If a default StorageClass exists, remove it:
+
+```shell
+if kubectl get sc standard >/dev/null 2>&1; then
+  kubectl delete deployment local-path-provisioner --namespace local-path-storage
+  kubectl delete namespace local-path-storage
+  kubectl delete sc standard
+fi
+```
+
+### 4. Install Cilium
+
+Install Cilium as the CNI (Container Network Interface):
+
+```shell
+cilium status >/dev/null 2>&1 || cilium install --helm-release-name cni --wait
+```
+
+### 5. Install KCM
+
+Deploy KCM using Helm:
+
+```shell
+helm upgrade kcm oci://ghcr.io/k0rdent/kcm/charts/kcm \
+  --atomic \
+  --create-namespace \
+  --install \
+  --namespace kcm-system \
+  --set flux2.kustomizeController.create=true \
+  --set 'flux2.kustomizeController.container.additionalArgs[0]=--watch-label-selector=k0rdent.mirantis.com/managed=true' \
+  --wait
+```
+
+Wait for KCM to be ready:
+
+```shell
+kubectl wait \
+  --for condition=Ready \
+  --namespace kcm-system \
+  --timeout 360s \
+  Management/kcm
+```
+
+### 6. Deploy Management Workload
+
+Deploy your management workload using `kustomize`:
+
+```shell
+kustomize build . | kubectl apply -f -
+kustomize build ./kcm | kubectl apply -f -
+```
+
+### 7. Create Workload Cluster
+
+Create a workload cluster:
+
+```shell
+kustomize build ./cluster | kubectl apply -f -
+```
+
+---
+
+## Troubleshooting
+
+- **Cluster Creation Issues**: Ensure Docker is running and `kind` is installed correctly.
+- **Cilium Installation Errors**: Verify that the Cilium CLI is installed and accessible in your PATH.
+- **KCM Deployment Issues**: Check Helm logs for errors during the KCM installation.
+
+---
 
 ## License
 

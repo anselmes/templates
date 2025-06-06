@@ -1,9 +1,0 @@
----
-namespace: knative
-buildMetadata:
-  - managedByLabel
-  - originAnnotations
-generatorOptions:
-  disableNameSuffixHash: true
-resources:
-  - server.yaml

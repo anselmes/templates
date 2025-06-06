@@ -1,0 +1,16 @@
+---
+# Custom Resource Definition (CRD) for ServiceTemplateChain
+# This file defines a Kubernetes Custom Resource (CR) that specifies a chain of supported templates.
+# It is used to manage and configure specific resources in a Kubernetes cluster.
+
+apiVersion: k0rdent.mirantis.com/v1beta1  # API version of the custom resource
+kind: ServiceTemplateChain               # Kind of the custom resource
+metadata:
+  name: crd                              # Name of the custom resource
+spec:
+  # List of supported templates that can be used with this ServiceTemplateChain
+  supportedTemplates:
+    - name: external-snapshotter-crd     # Template for external snapshotter CRD
+    - name: gateway-api-crd              # Template for Gateway API CRD
+    - name: gateway-api-experimental-crd # Template for experimental Gateway API CRD
+    - name: prometheus-operator-crd      # Template for Prometheus Operator CRD

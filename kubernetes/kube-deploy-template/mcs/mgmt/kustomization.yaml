@@ -1,0 +1,15 @@
+---
+# Metadata to include in the generated resources
+buildMetadata:
+  - managedByLabel  # Adds a label indicating the manager of the resource
+  - originAnnotations  # Adds annotations indicating the origin of the resource
+
+# Options for the generator
+# Disables the addition of a hash suffix to resource names
+# This ensures predictable resource names
+generatorOptions:
+  disableNameSuffixHash: true
+
+# List of resources to include in this kustomization
+resources:
+  - mcs.yaml  # Multi-cluster service configuration

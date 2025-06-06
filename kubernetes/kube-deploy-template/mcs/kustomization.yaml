@@ -1,0 +1,23 @@
+---
+# Metadata to include in the generated resources
+buildMetadata:
+  - managedByLabel  # Adds a label indicating the manager of the resource
+  - originAnnotations  # Adds annotations indicating the origin of the resource
+
+# Options for the generator
+# Disables the addition of a hash suffix to resource names
+# This ensures predictable resource names
+generatorOptions:
+  disableNameSuffixHash: true
+
+# List of resources to include in this kustomization
+resources:
+  - mgmt  # Management resources
+  - component/cloudcontroller  # Cloud controller component
+  - component/cloudvisor  # Cloudvisor component
+  - component/codecloud  # Codecloud component
+  - profile/cruiser  # Cruiser profile
+  - profile/harbor  # Harbor profile
+  - cni.yaml  # CNI configuration
+  - csi.yaml  # CSI configuration
+  - global.yaml  # Global configuration

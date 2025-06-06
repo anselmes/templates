@@ -1,0 +1,23 @@
+---
+# Namespace for the resources defined in this kustomization
+namespace: kcm-system  # Specifies the namespace for all resources in this kustomization
+
+# Metadata to include in the generated resources
+buildMetadata:
+  - managedByLabel  # Adds a label indicating the manager of the resource
+  - originAnnotations  # Adds annotations indicating the origin of the resource
+
+# Options for the generator
+# Disables the addition of a hash suffix to resource names
+# This ensures predictable resource names
+generatorOptions:
+  disableNameSuffixHash: true  # Prevents hash suffixes in resource names
+
+# Common labels to apply to all resources
+commonLabels:
+  k0rdent.mirantis.com/managed: "true"  # Indicates the resource is managed by Mirantis
+
+# List of resources to include in this kustomization
+resources:  # Specify the resources to be included in this kustomization
+  - accessmanagement.yaml  # Access management configurations
+  - kcm.yaml  # Kubernetes Cluster Manager configurations

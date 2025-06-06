@@ -1,0 +1,54 @@
+---
+# API version and kind of the resource
+apiVersion: k0rdent.mirantis.com/v1beta1
+kind: ClusterDeployment
+
+# Metadata for the resource
+metadata:
+  name: dev-vsphere  # Name of the cluster deployment
+  namespace: default  # Namespace for the deployment
+
+# Specification of the cluster deployment
+spec:
+  template: vsphere-cluster-0-0-1  # Template for the cluster
+  credential: vsphere-cluster-cred  # Credential for the cluster
+  propagateCredentials: false  # Whether to propagate credentials
+  config:
+    clusterLabels:  # Labels for the cluster
+      app.kubernetes.io/cni: cilium  # CNI provider
+      app.kubernetes.io/csi: openebs  # CSI provider
+    k0s:
+      api:
+        sans:
+          - vsphere.kubernetes.local  # Subject Alternative Names for the API server
+      network:
+        provider: custom  # Network provider
+      featureGates:
+        - name: UserNamespacesSupport
+          enabled: true
+      helm:
+        charts:
+          - name: cni
+            chartname: oci://registry-1.docker.io/labsonline/charts/cni
+            namespace: kube-system
+            version: 1.0.0
+  serviceSpec:
+    services:
+      - template: cni-1-0-0
+        name: cni
+        namespace: kube-system
+        values: |
+          cilium:
+            bgpControlPlane:
+              enabled: false
+            gatewayAPI:
+              gatewayClass:
+                create: "true"
+                hostNetwork:
+                  enabled: true
+            pool:
+              enabled: true
+              allowFirstLastIPs: No
+              cidr: 172.16.251.0/24
+            operator:
+              replicas: 1
