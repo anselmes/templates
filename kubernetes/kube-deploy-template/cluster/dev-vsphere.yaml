@@ -14,9 +14,7 @@ spec:
   credential: vsphere-cluster-cred  # Credential for the cluster
   propagateCredentials: false  # Whether to propagate credentials
   config:
-    clusterLabels:  # Labels for the cluster
-      app.kubernetes.io/cni: cilium  # CNI provider
-      app.kubernetes.io/csi: openebs  # CSI provider
+    clusterLabels: {} # Labels for the cluster
     k0s:
       api:
         sans:

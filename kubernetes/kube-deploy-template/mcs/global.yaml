@@ -38,6 +38,12 @@ spec:
   serviceSpec:  # Specification of the services
     priority: 100  # Priority of the service
     services:
-      - template: cert-manager-1-17-2  # Template for the cert-manager service
-        name: cert-manager  # Name of the cert-manager service
-        namespace: cert-manager  # Namespace of the cert-manager service
+      - template: ca-1-0-0
+        name: ca
+        namespace: cert-manager
+      - template: edns-1-0-0
+        name: edns
+        namespace: kube-system
+      - template: gateway-1-0-0
+        name: gateway
+        namespace: kube-system

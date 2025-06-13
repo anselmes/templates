@@ -20,4 +20,6 @@ commonLabels:
 # List of resources to include in this kustomization
 resources:  # Specify the resources to be included in this kustomization
   - accessmanagement.yaml  # Access management configurations
-  - kcm.yaml  # Kubernetes Cluster Manager configurations
+  # - cni.yaml # Container Network Interface configurations
+  # - csi.yaml # Container Storage Interface configurations
+  # - kcm.yaml  # Kubernetes Cluster Manager configurations

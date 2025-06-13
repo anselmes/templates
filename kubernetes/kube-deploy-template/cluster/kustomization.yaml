@@ -12,7 +12,7 @@ generatorOptions:
 
 # List of resources to include in this kustomization
 resources:
-  - dev-docker.yaml  # Development environment for Docker
-  - dev-remote.yaml  # Development environment for Remote clusters
-  # - dev-openstack.yaml  # Uncomment to include OpenStack development environment
-  # - dev-vsphere.yaml  # Uncomment to include vSphere development environment
+  - dev-docker.yaml
+  # - dev-remote.yaml
+  # - dev-openstack.yaml
+  # - dev-vsphere.yaml

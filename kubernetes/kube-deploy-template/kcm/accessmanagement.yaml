@@ -11,6 +11,7 @@ metadata:
 spec:
   accessRules:
     - serviceTemplateChains:  # Defines chains of service templates to apply
+        - addon # Add-on service template chain
         - core  # Core service template chain
         - crd  # Custom Resource Definition service template chain
       targetNamespaces:  # Specifies the namespaces where the rules will be applied

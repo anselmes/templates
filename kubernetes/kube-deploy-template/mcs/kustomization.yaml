@@ -18,6 +18,4 @@ resources:
   - component/codecloud  # Codecloud component
   - profile/cruiser  # Cruiser profile
   - profile/harbor  # Harbor profile
-  - cni.yaml  # CNI configuration
-  - csi.yaml  # CSI configuration
   - global.yaml  # Global configuration

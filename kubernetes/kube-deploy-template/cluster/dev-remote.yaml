@@ -15,9 +15,7 @@ spec:
   propagateCredentials: false  # Whether to propagate credentials
   config:
     controlPlaneNumber: 1  # Number of control plane nodes
-    clusterLabels:  # Labels for the cluster
-      app.kubernetes.io/cni: cilium  # CNI provider
-      app.kubernetes.io/csi: openebs  # CSI provider
+    clusterLabels: {} # Labels for the cluster
     k0smotron:
       service:
         type: NodePort  # Service type for k0smotron
@@ -30,33 +28,7 @@ spec:
       featureGates:
         - name: UserNamespacesSupport
           enabled: true
-      helm:
-        charts:
-          - name: cni
-            chartname: oci://registry-1.docker.io/labsonline/charts/cni
-            namespace: kube-system
-            version: 1.0.0
     machines:
       - address: 10.211.55.3
         user: parallels # The user must have root permissions
         port: 22
-  serviceSpec:
-    services:
-      - template: cni-1-0-0
-        name: cni
-        namespace: kube-system
-        values: |
-          cilium:
-            bgpControlPlane:
-              enabled: false
-            gatewayAPI:
-              gatewayClass:
-                create: "true"
-                hostNetwork:
-                  enabled: true
-            pool:
-              enabled: true
-              allowFirstLastIPs: No
-              cidr: 172.16.252.0/24
-            operator:
-              replicas: 1
